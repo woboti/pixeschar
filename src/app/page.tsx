@@ -1,12 +1,14 @@
 'use client'
+
 import { useState  } from "react";
-import Image from "next/image"
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
 
   const [pics, setPics] = useState<any[]>([]);
   const [searchText, setSearchText] = useState('');
-  
+  const router = useRouter()
+
   function performSearch(){
     console.log(`searching for '${searchText}'`)
 
@@ -34,9 +36,14 @@ export default function Home() {
     setSearchText(e.target.value)
   }
 
+  function onSubmit(e: React.FormEvent<HTMLFormElement>){
+    performSearch()
+    return false
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
-      <form className="w-full max-w-md mb-6">
+      <form className="w-full max-w-md mb-6" onSubmit={onSubmit}>
         <div className="flex items-center border-b border-teal-500 py-2">
           <input value={searchText} onChange={updateSearchText} className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" type="text" placeholder="What are you looking for?" aria-label="Full name"/>
           <button className="flex-shrink-0 border-transparent border-4 text-teal-500 hover:text-teal-800 text-sm py-1 px-2 rounded" type="button" onClick={performSearch}>
@@ -48,10 +55,12 @@ export default function Home() {
           {pics.map(function(pic, i){
             return <div>
               <img
-                  src={pic.previewURL}
-                alt={pic.tags}
-                width={pic.previewWidth}
-                height={pic.previewHeight}
+                  className="hover:border-2 hover:border-teal-500"
+                  src={pic.webformatURL}
+                  alt={pic.tags}
+                  width={pic.webformatWidth}
+                  height={pic.webformatHeight}
+                  onClick={() => router.push('/image/' + pic.id)}
               />
             </div>
           })}
